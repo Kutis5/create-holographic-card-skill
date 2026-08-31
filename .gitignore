@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+node_modules/
+build/
+plugins/holographic-card-preview/assets/holo-textures/sources/
+plugins/holographic-card-preview/assets/holo-textures/contact-sheet.png
+plugins/holographic-card-preview/skills/create-holographic-card/assets/react-template/holo-textures/sources/
+plugins/holographic-card-preview/skills/create-holographic-card/assets/react-template/holo-textures/contact-sheet.png

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "card-presentation-v2.schema.json",
+  "title": "Card Presentation IR v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "frame", "radius", "surface", "foil", "texture", "sparkle", "glare", "depth", "motion", "constraints"],
+  "properties": {
+    "version": { "const": 2 },
+    "frame": { "type": "object", "additionalProperties": false, "required": ["style", "width", "color"], "properties": { "style": { "enum": ["none", "hairline", "narrow", "double"] }, "width": { "type": "number", "minimum": 0, "maximum": 0.9 }, "color": { "$ref": "#/$defs/color" }, "colorMode": { "enum": ["fixed", "image"] } } },
+    "radius": { "type": "object", "additionalProperties": false, "required": ["outer"], "properties": { "outer": { "type": "number", "minimum": 2, "maximum": 8 }, "inner": { "type": "number", "minimum": 0, "maximum": 8, "readOnly": true } } },
+    "surface": { "type": "object", "additionalProperties": false, "required": ["color", "accent", "material"], "properties": { "color": { "$ref": "#/$defs/color" }, "accent": { "$ref": "#/$defs/color" }, "material": { "enum": ["clear-coat", "pearl", "brushed-metal", "spectral-lines", "etched-holo", "cosmic-flake", "star-holo"] } } },
+    "foil": { "$ref": "#/$defs/foil" },
+    "texture": { "type": "object", "additionalProperties": false, "required": ["kind", "target", "intensity"], "properties": { "kind": { "enum": ["none", "micro-grain", "scanline", "geometric", "contour", "sparse-flake"] }, "target": { "$ref": "#/$defs/target" }, "intensity": { "type": "number", "minimum": 0, "maximum": 1 } } },
+    "sparkle": { "$ref": "#/$defs/sparkle" },
+    "glare": { "$ref": "#/$defs/glare" },
+    "depth": { "type": "object", "additionalProperties": false, "required": ["parallaxX", "parallaxY", "lift", "shadowOpacity", "shadowBlur", "rimIntensity"], "properties": { "parallaxX": { "type": "number", "minimum": 0, "maximum": 2.5 }, "parallaxY": { "type": "number", "minimum": 0, "maximum": 2.5 }, "lift": { "type": "number", "minimum": 0, "maximum": 28 }, "shadowOpacity": { "type": "number", "minimum": 0, "maximum": 0.3 }, "shadowBlur": { "type": "number", "minimum": 0, "maximum": 28 }, "rimIntensity": { "type": "number", "minimum": 0, "maximum": 0.25 } } },
+    "motion": { "type": "object", "additionalProperties": false, "required": ["maxX", "maxY", "scale", "smoothing"], "properties": { "maxX": { "type": "number", "minimum": 0, "maximum": 14 }, "maxY": { "type": "number", "minimum": 0, "maximum": 14 }, "scale": { "type": "number", "minimum": 1, "maximum": 1.05 }, "smoothing": { "type": "number", "minimum": 0.08, "maximum": 0.4 } } },
+    "constraints": { "type": "object", "additionalProperties": false, "required": ["keepInsideFrame"], "properties": { "keepInsideFrame": { "const": true } } }
+  },
+  "$defs": {
+    "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "target": { "enum": ["background", "surface", "frame"] },
+    "foil": { "type": "object", "additionalProperties": false, "required": ["enabled", "target", "colors", "intensity"], "properties": { "enabled": { "type": "boolean" }, "target": { "$ref": "#/$defs/target" }, "colors": { "type": "array", "minItems": 1, "maxItems": 6, "items": { "$ref": "#/$defs/color" } }, "intensity": { "type": "number", "minimum": 0, "maximum": 1 } } },
+    "sparkle": { "type": "object", "additionalProperties": false, "required": ["enabled", "target", "intensity"], "properties": { "enabled": { "type": "boolean" }, "target": { "$ref": "#/$defs/target" }, "intensity": { "type": "number", "minimum": 0, "maximum": 1 } } },
+    "glare": { "type": "object", "additionalProperties": false, "required": ["enabled", "target", "intensity"], "properties": { "enabled": { "type": "boolean" }, "target": { "$ref": "#/$defs/target" }, "intensity": { "type": "number", "minimum": 0, "maximum": 1 } } }
+  }
+}

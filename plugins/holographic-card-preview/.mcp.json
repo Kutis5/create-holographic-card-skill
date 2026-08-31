@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "holographicCardPreview": {
+      "title": "Holographic Card Preview",
+      "description": "Validate and preview one local layered holographic card in Codex's right-side Browser panel.",
+      "cwd": ".",
+      "command": "python",
+      "args": ["./mcp/server.py", "--stdio"]
+    }
+  }
+}

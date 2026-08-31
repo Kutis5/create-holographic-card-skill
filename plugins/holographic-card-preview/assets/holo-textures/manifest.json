@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "version": "1.1.0",
+  "assetPack": "original-holographic-material-atlases-v1.1",
+  "size": [
+    512,
+    512
+  ],
+  "channelContract": {
+    "R": "microHeight",
+    "G": "roughness",
+    "B": "flakeDefectDensity",
+    "A": "anisotropyDirection0To2Pi"
+  },
+  "sourceGeneration": {
+    "tool": "OpenAI built-in image generation",
+    "usage": "One original source plate per material; locally transformed into semantic channels.",
+    "thirdPartyCodeOrAssets": false,
+    "externalUrls": []
+  },
+  "assets": {
+    "clear-coat": {
+      "runtime": "clear-coat.webp",
+      "source": "sources/clear-coat.png",
+      "prompt": "Use case: stylized-concept\nAsset type: source plate for a GPU holographic material atlas\nPrimary request: Create a seamless square macro material scan of transparent premium clear coat, showing extremely subtle orange-peel variation, sparse hairline scuffs, faint polishing marks, microscopic pits, and low-density surface defects.\nStyle/medium: orthographic flatbed-style scientific material capture, grayscale neutral data-like texture, natural imperfections, physically plausible.\nComposition/framing: texture fills the entire 1:1 frame edge to edge, uniform scale, no object, no border, no perspective.\nLighting/mood: perfectly even diffuse illumination, no directional lighting, no vignette, no cast shadow.\nConstraints: highly irregular multi-scale detail; low roughness overall; no recognizable shapes; tile-friendly edges; no text, logo, watermark, branding, card imagery, or external scene.\nAvoid: regular grids, repeating tiles, concentric rings, sine-wave bands, uniform random dots, dramatic scratches, glossy product render.",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "c160a740863af3db8ca13544ce167288cc296e6f69ab025850988ef7b411ced3",
+      "pixelSha256": "8c385e3a5f8741bbe6b59235cf73615ac3629f9ca03fedbf6aed835dc0c30b9c",
+      "sourceSha256": "ceb2dfbbe65e8086c3e9c14c0c742ea47d536ea8a2a8cdc09292d94582b54406",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 0,
+          "max": 255,
+          "mean": 61.3631,
+          "stddev": 50.956
+        },
+        "G": {
+          "min": 18,
+          "max": 76,
+          "mean": 52.2645,
+          "stddev": 11.5228
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 6.1796,
+          "stddev": 36.2717
+        },
+        "A": {
+          "min": 0,
+          "max": 255,
+          "mean": 127.51,
+          "stddev": 71.7473
+        }
+      },
+      "densityCoverage": 0.021397
+    },
+    "pearl": {
+      "runtime": "pearl.webp",
+      "source": "sources/pearl.png",
+      "prompt": "Use case: stylized-concept\nAsset type: source plate for a GPU holographic material atlas\nPrimary request: Create a seamless square macro material scan of fine nacreous pearl coating with irregular mica platelets, soft cloud-like height fields, overlapping translucent mineral flakes, slow directional drift, and natural density variation.\nStyle/medium: orthographic scientific material scan, pale neutral grayscale with subtle pearlescent tonal separation, physically plausible and organic.\nComposition/framing: texture fills the entire 1:1 frame edge to edge, no object, no border, no perspective.\nLighting/mood: even diffuse illumination without glare, vignette, or cast shadow.\nConstraints: broad soft structures plus fine platelet detail; tile-friendly edges; no text, logo, watermark, branding, card imagery, or external scene.\nAvoid: fish scales, regular cellular grids, concentric rings, rainbow colors, sine waves, uniform random dots, decorative pattern design.",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "2ca4899b7fb00132302ede1f76000c41a13ce808bec09421c90e664692107440",
+      "pixelSha256": "b2158fe4a7bc894cfd1916e4eb2b7505fc0bf6f265867f781d3057cd6f61f2d4",
+      "sourceSha256": "9560d20675b9f3ac06f3ad400a6e5b619f95253a6ac92bdd430d1cd7ccb4ee5b",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 0,
+          "max": 255,
+          "mean": 100.8071,
+          "stddev": 52.5264
+        },
+        "G": {
+          "min": 72,
+          "max": 168,
+          "mean": 125.3337,
+          "stddev": 16.5564
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 50.1273,
+          "stddev": 94.1302
+        },
+        "A": {
+          "min": 0,
+          "max": 255,
+          "mean": 111.1464,
+          "stddev": 66.3767
+        }
+      },
+      "densityCoverage": 0.180916
+    },
+    "brushed-metal": {
+      "runtime": "brushed-metal.webp",
+      "source": "sources/brushed-metal.png",
+      "prompt": "Use case: stylized-concept\nAsset type: source plate for a GPU holographic material atlas\nPrimary request: Create a seamless square macro scan of premium brushed metal foil with a dominant grain direction, locally curved grooves, uneven groove widths, interrupted brushing, fine cross scratches, occasional polishing defects, and natural manufacturing variation.\nStyle/medium: orthographic grayscale metallography scan, dense tactile microstructure, physically plausible.\nComposition/framing: texture fills the entire 1:1 frame edge to edge, no object, no border, no perspective.\nLighting/mood: even diffuse technical capture with no specular hotspot, no vignette, no cast shadow.\nConstraints: clear anisotropy without mechanical repetition; tile-friendly edges; no text, logo, watermark, branding, card imagery, or external scene.\nAvoid: perfectly parallel lines, regular spacing, moire, concentric rings, woven fabric, uniform random noise, product render.",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "a52aa5adda152cfe0fddf5a0b63efd7659a430283d6724ed6ea4fb4944ab5747",
+      "pixelSha256": "5ef85efe3761de7532a9dc7e90b9309a9e367854b57c2f28a97f98fde0acf214",
+      "sourceSha256": "386e4f311b11834a32e9a4da78bb5193a7d7d95d7b21c5a3a79f5d7e1f64de30",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 0,
+          "max": 255,
+          "mean": 82.5925,
+          "stddev": 62.6383
+        },
+        "G": {
+          "min": 48,
+          "max": 138,
+          "mean": 100.6079,
+          "stddev": 17.8034
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 18.9334,
+          "stddev": 61.2345
+        },
+        "A": {
+          "min": 0,
+          "max": 255,
+          "mean": 133.8626,
+          "stddev": 68.2755
+        }
+      },
+      "densityCoverage": 0.065186
+    },
+    "spectral-lines": {
+      "runtime": "spectral-lines.webp",
+      "source": "sources/spectral-lines.png",
+      "prompt": "Use case: stylized-concept\nAsset type: corrected source plate for a GPU holographic diffraction material atlas\nPrimary request: Create a seamless square orthographic macro scan of a physically embossed diffraction foil master. Use two oblique families of SHORT, BROKEN microgroove fragments with continuously drifting spacing, frequent missing segments, subtle bends, imperfect embossing pressure, scratches, contamination, and irregular transition zones. No groove may continue straight across a large portion of the image.\nStyle/medium: neutral grayscale technical microscopy, organic manufacturing imperfection rather than graphic pattern.\nComposition: full-frame 1:1 material scan, edge to edge, no object, no border, no perspective.\nLighting: uniform diffuse capture, no glare, shadow, vignette, or gradient.\nConstraints: multi-scale disorder and visibly non-periodic spacing; tile-friendly edges; no text, logo, watermark, brand, card, or scene.\nStrictly avoid: perfectly parallel lines, constant line spacing, rectangular patches, herringbone, woven pattern, moire, sine waves, concentric rings, circuit board geometry, decorative design.",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "a60bc242a196b5c7ce9b82f203012e1103cc6c394967e3d92e7181edd7616fe4",
+      "pixelSha256": "9f09831153206be05ba0efc1468a0245ebeef225d519a4cea975bff88ff484bb",
+      "sourceSha256": "fcbb2538ecc259740ee7b77a277f051e9b16ca9bda9de013740b22fecca72d4a",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 0,
+          "max": 255,
+          "mean": 73.1853,
+          "stddev": 67.6201
+        },
+        "G": {
+          "min": 34,
+          "max": 118,
+          "mean": 85.7487,
+          "stddev": 15.9028
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 24.3832,
+          "stddev": 69.8624
+        },
+        "A": {
+          "min": 0,
+          "max": 255,
+          "mean": 132.3956,
+          "stddev": 70.4829
+        }
+      },
+      "densityCoverage": 0.086555
+    },
+    "etched-holo": {
+      "runtime": "etched-holo.webp",
+      "source": "sources/etched-holo.png",
+      "prompt": "Use case: stylized-concept\nAsset type: corrected source plate for a GPU micro-etched holographic material atlas\nPrimary request: Create a seamless square orthographic macro scan of angular offset micro-etched foil cells made from short incomplete hatch fragments. Use broken polygonal cell boundaries, misregistered overlapping direction fields, uneven etch depth, missing edges, abrasions, sparse pits, and abrupt local angle changes. Every cluster must remain angular and open, never forming closed circular or spiral flow.\nStyle/medium: grayscale technical surface microscopy, premium print finishing with natural manufacturing flaws.\nComposition: full-frame 1:1 material scan, edge to edge, no object, no border, no perspective.\nLighting: flat diffuse technical capture, no glare, shadow, vignette, or gradient.\nConstraints: irregular phased directional cells; tile-friendly edges; no text, logo, watermark, brand, card, or scene.\nStrictly avoid: concentric rings, fingerprints, whorls, spirals, circular cells, perfect hexagons, regular grids, optical-illusion art, woven fabric, uniform random dots.",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "16e0fc91827442d5ae8ac5be5209adc5c747ee44296fd630b928bfaa3f6069ce",
+      "pixelSha256": "d354f3bf9bc1c6c8b3bb6a40d2bac2448bf698c16a2c44ce616b47c1a9810aee",
+      "sourceSha256": "d428d887a68ab9080585b2b075d48540b8ec847689db18d6d02e792af9cfae0e",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 0,
+          "max": 255,
+          "mean": 62.9914,
+          "stddev": 67.3626
+        },
+        "G": {
+          "min": 54,
+          "max": 148,
+          "mean": 115.0268,
+          "stddev": 15.9878
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 29.2043,
+          "stddev": 76.9586
+        },
+        "A": {
+          "min": 0,
+          "max": 255,
+          "mean": 125.0059,
+          "stddev": 68.8396
+        }
+      },
+      "densityCoverage": 0.107029
+    },
+    "cosmic-flake": {
+      "runtime": "cosmic-flake.webp",
+      "source": "sources/cosmic-flake.png",
+      "prompt": "Use case: stylized-concept\nAsset type: source plate for a GPU holographic material atlas\nPrimary request: Create a seamless square macro material scan of sparse irregular metallic foil flakes in three natural size ranges, with chipped polygonal fragments, tiny mineral splinters, occasional clustered inclusions, varied orientation, uneven density, and large quiet negative areas.\nStyle/medium: grayscale scientific particle scan on a neutral dark field, physically plausible premium flake coating.\nComposition/framing: texture fills the entire 1:1 frame edge to edge, no object, no border, no perspective.\nLighting/mood: flat even illumination that reveals particle shapes without glow, no vignette, no cast shadow.\nConstraints: flakes must look like irregular material fragments, not symbols; tile-friendly edges; no text, logo, watermark, branding, card imagery, or external scene.\nAvoid: stars, spark icons, galaxies, planets, circles, uniform confetti, evenly distributed random dots, repeating clusters.",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "f586f1f8991109bf2a44c92ce3aad4d30ff1f5f7f933f01c789f52b15f81e3c1",
+      "pixelSha256": "41c605fc86efa65d8a1b82c3bb7d698aa0f54a5de262a036130696d08a753cb2",
+      "sourceSha256": "cd776840e429df91f471b90e0a3fcbb4559af924fbb53f3531f06bc59f8ee2e7",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 0,
+          "max": 255,
+          "mean": 46.299,
+          "stddev": 52.954
+        },
+        "G": {
+          "min": 42,
+          "max": 186,
+          "mean": 111.7514,
+          "stddev": 22.8373
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 13.575,
+          "stddev": 54.4464
+        },
+        "A": {
+          "min": 0,
+          "max": 255,
+          "mean": 119.8407,
+          "stddev": 64.0877
+        }
+      },
+      "densityCoverage": 0.049801
+    },
+    "star-holo": {
+      "runtime": "star-holo.webp",
+      "source": "sources/star-holo.png",
+      "prompt": "Use case: stylized-concept\nAsset type: source plate for a GPU holographic star material atlas\nPrimary request: Create a square orthographic technical material scan of subtle embossed star motifs on deep neutral charcoal premium foil. Include 12–18 primary five-point stars and slender four-point starbursts plus 30–50 tiny star specks, with varied size, rotation, spacing, depth, natural wear, and generous quiet areas.\nStyle/medium: neutral grayscale scientific surface microscopy, physically plausible fine embossing rather than illustration.\nComposition/framing: full-frame 1:1 material scan, no object, border, or perspective.\nLighting/mood: perfectly even diffuse illumination; non-emissive shallow relief.\nConstraints: crisp recognizable star silhouettes, natural imperfections, tile-friendly edge distribution, no text, logo, watermark, brand, card, or scene.\nAvoid: galaxy, planets, nebula, glow, bloom, lens flare, gradient, vignette, cast shadow, regular grid, uniform confetti, or decorative border.",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "861c87f767a1b6e67cf9998a9c0cd28258df2becdee9ea4b1cc30c400e9f5aae",
+      "pixelSha256": "432cf1ebae1a61daa66518e3acbd6fc46d14aafbd4f96a7152e75bca82e8edd7",
+      "sourceSha256": "052a8ee1ee38ee0f37cb241908b74fed3c7ff73ea1266ff8e64eeb2878110776",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 76,
+          "max": 224,
+          "mean": 89.0994,
+          "stddev": 9.1307
+        },
+        "G": {
+          "min": 62,
+          "max": 148,
+          "mean": 144.476,
+          "stddev": 14.8688
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 10.4475,
+          "stddev": 48.9291
+        },
+        "A": {
+          "min": 0,
+          "max": 243,
+          "mean": 51.8871,
+          "stddev": 21.5578
+        }
+      },
+      "densityCoverage": 0.041111,
+      "mainStarCount": 15,
+      "microStarCount": 40
+    }
+  },
+  "shared": {
+    "blue-noise": {
+      "runtime": "blue-noise.webp",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "7dd5eee534005339f71555cf0617f315645ce4931e4f0129ffb82cdd81966821",
+      "pixelSha256": "74fc3b9ea989a7fe496ef94396037bfb9414571b82c1124e311e7d0f31ad20c2",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 0,
+          "max": 255,
+          "mean": 127.9394,
+          "stddev": 69.9063
+        },
+        "G": {
+          "min": 0,
+          "max": 255,
+          "mean": 127.9394,
+          "stddev": 69.9063
+        },
+        "B": {
+          "min": 0,
+          "max": 255,
+          "mean": 127.9394,
+          "stddev": 69.9063
+        },
+        "A": {
+          "min": 255,
+          "max": 255,
+          "mean": 255.0,
+          "stddev": 0.0
+        }
+      },
+      "origin": "Deterministic local synthesis; no image model or external texture."
+    },
+    "micro-grain": {
+      "runtime": "micro-grain.webp",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "encoding": "lossless-webp",
+      "sha256": "c01a2406f38e19da5362ea1aec1239dc7fc5b0bc30b46475d39e7f24edc7603e",
+      "pixelSha256": "3e6701062c7ddd7bbbd266e97164ef160492a0de209a02786fe43b11958cb471",
+      "edgeMae": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0
+      },
+      "channelStats": {
+        "R": {
+          "min": 28,
+          "max": 226,
+          "mean": 109.9604,
+          "stddev": 49.8004
+        },
+        "G": {
+          "min": 28,
+          "max": 226,
+          "mean": 109.9604,
+          "stddev": 49.8004
+        },
+        "B": {
+          "min": 28,
+          "max": 226,
+          "mean": 109.9604,
+          "stddev": 49.8004
+        },
+        "A": {
+          "min": 255,
+          "max": 255,
+          "mean": 255.0,
+          "stddev": 0.0
+        }
+      },
+      "origin": "Deterministic local synthesis; no image model or external texture."
+    }
+  },
+  "contactSheet": {
+    "path": "contact-sheet.png",
+    "sha256": "4c8bbe8a84829a2b32a5a4c1b011cc624a5bc5098a08de46ac2857e04ff71643"
+  }
+}

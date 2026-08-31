@@ -1,0 +1,26 @@
+{
+  "name": "holographic-card-preview",
+  "version": "0.10.0+codex.20260831000000",
+  "description": "Create, preview, and export original full-bleed layered holographic cards in Codex.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Holographic Card Studio",
+    "shortDescription": "Create, preview, and export holographic cards",
+    "longDescription": "Generate and layer original 5:7 card art, preview it with the production WebGL2 renderer, and optionally export a Cardex .hcard package. The transparent subject, renderer, MCP server, and skills install together.",
+    "developerName": "Local developer",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "defaultPrompt": [
+      "Create a layered holographic card from this image",
+      "Preview this background and transparent subject as one 3D card",
+      "Export this completed card as a Cardex .hcard package"
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

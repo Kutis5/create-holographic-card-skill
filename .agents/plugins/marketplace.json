@@ -1,0 +1,20 @@
+{
+  "name": "holographic-card-studio",
+  "interface": {
+    "displayName": "Holographic Card Studio"
+  },
+  "plugins": [
+    {
+      "name": "holographic-card-preview",
+      "source": {
+        "source": "local",
+        "path": "./plugins/holographic-card-preview"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

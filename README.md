@@ -2,7 +2,7 @@
 
 把人物、宠物、产品或原创画面制作成一张可交互的 5:7 分层全息卡牌。这个 Codex skill 负责卡面检查、图像生成与编辑、主体分层、材质配置、预览校验，以及按需导出 React 组件或 Cardex `.hcard` 文件。
 
-仓库直接提供可读、可编辑的 skill 源码，不包含 `.skill` 压缩包。
+仓库提供可读、可编辑的 skill 源码，并附带可一次安装的 Codex plugin：它把创建 skill、预览 MCP、WebGL renderer 和纹理资源作为一个产品分发。
 
 ## 能做什么
 
@@ -28,42 +28,31 @@
 
 ## 安装
 
-Codex 会从 skill 目录中的 `SKILL.md` 读取名称、触发描述和执行规则。你可以安装到个人目录，也可以只在某个仓库中启用。详细规则见 [OpenAI 的 Build skills 文档](https://learn.chatgpt.com/docs/build-skills)。
+### 推荐：安装完整插件
 
-### 使用 skill-installer
+完整插件的展示名为 **Holographic Card Studio**。安装一次即可得到 `$create-holographic-card`、`$preview-holographic-card` 和 `preview_holographic_card` MCP 工具；无需再单独寻找预览服务。
 
-在 Codex 中输入：
-
-```text
-$skill-installer install create-holographic-card from https://github.com/594901146-coder/create-holographic-card-skill
-```
-
-### 手动安装到个人目录
-
-macOS / Linux：
-
-```bash
-git clone https://github.com/594901146-coder/create-holographic-card-skill.git \
-  ~/.agents/skills/create-holographic-card
-```
-
-Windows PowerShell：
+1. 克隆本仓库：
 
 ```powershell
-git clone https://github.com/594901146-coder/create-holographic-card-skill.git `
-  "$HOME\.agents\skills\create-holographic-card"
+git clone https://github.com/Kutis5/create-holographic-card-skill.git
 ```
 
-### 只在当前仓库中启用
+2. 在 Codex 的 Plugins 页面添加该克隆目录为 marketplace，选择 **Holographic Card Studio** 并安装。命令行环境可使用：
 
-在目标仓库根目录执行：
-
-```bash
-git clone https://github.com/594901146-coder/create-holographic-card-skill.git \
-  .agents/skills/create-holographic-card
+```powershell
+codex plugin marketplace add <cloned-repository-path>
 ```
 
-Codex 通常会自动发现新安装的 skill。如果列表没有更新，请重启 Codex。
+插件 marketplace 定义位于 `.agents/plugins/marketplace.json`；安装后的新任务会同时发现两个 skill 和本地 MCP server。
+
+### 兼容：仅安装主 skill
+
+根目录仍保留独立 skill，适合开发或已有 MCP 配置的环境；它不再是推荐安装方式，因为不会随安装携带预览工具。
+
+```text
+$skill-installer install create-holographic-card from https://github.com/Kutis5/create-holographic-card-skill
+```
 
 ## 使用
 
@@ -95,7 +84,7 @@ python scripts/inspect_card_face.py --art <input-image>
 
 - 支持 skills、图像生成和本地图片检查的 Codex 环境。
 - Python 3，以及 `Pillow` 和 `NumPy`。
-- 最终交互预览所需的 `preview_holographic_card` MCP 工具。
+- 最终交互预览所需的 `preview_holographic_card` MCP 工具。完整插件会自动携带该工具。
 
 安装 Python 图像依赖：
 
@@ -109,7 +98,7 @@ python -m pip install Pillow numpy
 python -m pip install rembg
 ```
 
-`preview_holographic_card` 工具不在本仓库中。缺少该工具时，卡面生成和本地分层脚本仍可使用，但 skill 无法完成规定的 WebGL2 预览步骤。
+仅安装独立 skill 时，缺少 `preview_holographic_card` 会使 WebGL2 预览步骤不可用；安装完整插件即可解决此依赖。
 
 ## 分层脚本
 
@@ -170,15 +159,9 @@ python scripts/export_hcard.py \
 
 导出脚本打包已经验证的图层和 Presentation IR，不会重新生成图片或修改渲染参数。
 
-## 默认材质参数
+## 材质策略
 
-| 参数 | 默认值 |
-| --- | ---: |
-| Foil | `0.78` |
-| Texture | `0.48` |
-| Glare | `0.62` |
-| Tilt | `14° × 14°` |
-| Hover scale | `1.024` |
+浅色、低饱和、粉彩和产品摄影默认使用淡银扫光：foil `0.28`、texture `0.32`、glare `0.36`。鲜艳、虹彩或明确要求彩虹的画面使用旗舰模式：foil `0.78`、texture `0.48`、glare `0.62`。两种模式均使用 `14° × 14°` 倾斜和 `1.024` 悬浮缩放。
 
 材质族包括 `clear-coat`、`pearl`、`brushed-metal`、`spectral-lines`、`etched-holo`、`cosmic-flake` 和 `star-holo`。各材质共享同一套主体隔离规则。
 

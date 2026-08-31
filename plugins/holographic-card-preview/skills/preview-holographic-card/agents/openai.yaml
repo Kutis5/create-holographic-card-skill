@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preview Layered Holographic Card"
+  short_description: "Preview flagship holographic cards"
+  default_prompt: "Use $preview-holographic-card to open my layered card with the production flagship holographic renderer."

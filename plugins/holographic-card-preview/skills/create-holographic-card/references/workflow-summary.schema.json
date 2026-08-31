@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/holographic-card-workflow-summary-v1.schema.json",
+  "title": "Holographic Card Workflow Summary v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "imageGenerationCount",
+    "segmentationMethod",
+    "fallbackReason",
+    "outputs",
+    "validation",
+    "previewWarnings"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "imageGenerationCount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cardFace", "background", "keyed"],
+      "properties": {
+        "cardFace": {"type": "integer", "minimum": 0, "maximum": 1},
+        "background": {"type": "integer", "minimum": 0, "maximum": 1},
+        "keyed": {"type": "integer", "minimum": 0, "maximum": 1}
+      }
+    },
+    "segmentationMethod": {"enum": ["adaptive-chroma", "chroma-guided-local", "local-fallback"]},
+    "fallbackReason": {"type": ["string", "null"], "maxLength": 2048},
+    "outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["art", "background", "subject", "previewUrl"],
+      "properties": {
+        "art": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "background": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "subject": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "previewUrl": {"type": "string", "minLength": 1, "maxLength": 2048}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cardFace", "background", "subject", "recomposition"],
+      "properties": {
+        "cardFace": {"$ref": "#/$defs/check"},
+        "background": {"$ref": "#/$defs/check"},
+        "subject": {"$ref": "#/$defs/check"},
+        "recomposition": {"$ref": "#/$defs/check"}
+      }
+    },
+    "previewWarnings": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {"type": "string", "maxLength": 2048}
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "failures"],
+      "properties": {
+        "passed": {"type": "boolean"},
+        "failures": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {"type": "string", "maxLength": 2048}
+        }
+      }
+    }
+  }
+}

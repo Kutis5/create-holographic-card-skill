@@ -1,0 +1,10 @@
+export { HolographicCard } from "./HolographicCard";
+export type { HolographicCardProps } from "./HolographicCard";
+export type { CardPresentation, EffectTarget, FrameColorMode, MaterialFamily, TextureKind } from "./presentation";
+export { clearCoatPresentation } from "./presentation";
+export { getCard } from "./card-registry";
+export type { CardRecord, CardRegistry } from "./card-registry";
+export { OPTICAL_RECIPES, opticalRecipe, resolveEffectTargets } from "./optical-recipes";
+export type { OpticalRecipe, ResolvedTargets } from "./optical-recipes";
+export { MATERIAL_FAMILIES, TEXTURE_KINDS, NEUTRAL_REVEAL, MAX_DEVICE_PIXEL_RATIO, MOBILE_MAX_DEVICE_PIXEL_RATIO, MOBILE_MAX_CANVAS_PIXELS, IDLE_FRAME_INTERVAL_MS, ACTIVE_FRAME_INTERVAL_MS, createHolographicRenderer } from "./holo-engine.js";
+export type { HolographicRenderer, HolographicRendererDiagnostics } from "./holo-engine.js";
