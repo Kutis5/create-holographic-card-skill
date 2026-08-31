@@ -63,6 +63,17 @@ function mixRgb(a, b, amount) {
   return a.map((channel, index) => channel + (b[index] - channel) * t);
 }
 
+function expandNeutralFoilColors(source) {
+  const lightnessOffsets = [-0.05, 0.035, -0.02, 0.05, -0.035, 0.025];
+  return lightnessOffsets.map((offset, index) => {
+    const position = source.length === 1 ? 0 : (index / 5) * (source.length - 1);
+    const left = Math.floor(position);
+    const right = Math.min(source.length - 1, left + 1);
+    const [hue, saturation, lightness] = rgbToHsl(mixRgb(source[left], source[right], position - left));
+    return toHex(hslToRgb([hue, Math.min(saturation, 0.2), clamp(lightness + offset, 0.36, 0.82)]));
+  });
+}
+
 export function perceptualIntensity(value, kind = "foil") {
   const gain = INTENSITY_GAIN[kind] || INTENSITY_GAIN.foil;
   return clamp(1 - Math.exp(-gain * clamp(Number(value) || 0)));
@@ -73,6 +84,10 @@ export function expandFoilColors(colors, accent = "#78d7ff") {
   const fallback = parseHex(accent) || [120, 215, 255];
   const source = parsed.length ? parsed : [fallback];
   if (source.length >= 6) return source.slice(0, 6).map(toHex);
+
+  if (source.every((color) => rgbToHsl(color)[1] <= 0.2)) {
+    return expandNeutralFoilColors(source);
+  }
 
   const [baseHue, baseSaturation, baseLightness] = rgbToHsl(source[0]);
   const spectrumOffsets = [0, 54, 112, 176, 238, 304];
