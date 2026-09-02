@@ -7,6 +7,10 @@ from urllib.request import urlopen
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = ROOT.parents[1]
+CANONICAL_TEMPLATE = REPOSITORY_ROOT / "assets" / "react-template"
+if not CANONICAL_TEMPLATE.is_dir():
+    CANONICAL_TEMPLATE = REPOSITORY_ROOT / "create-holographic-card" / "assets" / "react-template"
 SPEC = importlib.util.spec_from_file_location("holo_preview_server", ROOT / "mcp" / "server.py"); assert SPEC and SPEC.loader
 SERVER = importlib.util.module_from_spec(SPEC); sys.modules[SPEC.name] = SERVER; SPEC.loader.exec_module(SERVER)
 
@@ -181,18 +185,18 @@ class PreviewServerTests(unittest.TestCase):
         self.assertIn("NEUTRAL_REVEAL = IDLE_REVEAL", js)
         self.assertIn("flagshipOptics", js)
         self.assertIn("MAX_DEVICE_PIXEL_RATIO = 2", js)
-        canonical_path = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "holo-engine.js"
+        canonical_path = CANONICAL_TEMPLATE / "holo-engine.js"
         if canonical_path.is_file():
             self.assertEqual((ROOT / "assets" / "holo-engine.js").read_bytes(), canonical_path.read_bytes())
         else:
             self.assertIn("buildFragmentShader", js)
-        canonical_palette = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "frame-palette.js"
+        canonical_palette = CANONICAL_TEMPLATE / "frame-palette.js"
         self.assertEqual((ROOT / "assets" / "frame-palette.js").read_bytes(), canonical_palette.read_bytes())
-        canonical_optical = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "optical-state.js"
+        canonical_optical = CANONICAL_TEMPLATE / "optical-state.js"
         self.assertEqual((ROOT / "assets" / "optical-state.js").read_bytes(), canonical_optical.read_bytes())
-        canonical_pointer_motion = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "pointer-motion.js"
+        canonical_pointer_motion = CANONICAL_TEMPLATE / "pointer-motion.js"
         self.assertEqual((ROOT / "assets" / "pointer-motion.js").read_bytes(), canonical_pointer_motion.read_bytes())
-        canonical_textures = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "holo-textures"
+        canonical_textures = CANONICAL_TEMPLATE / "holo-textures"
         for name in (*SERVER.HOLO_TEXTURE_NAMES, "manifest.json"):
             self.assertEqual((ROOT / "assets" / "holo-textures" / name).read_bytes(), (canonical_textures / name).read_bytes())
         preview_js = (ROOT / "assets" / "preview.js").read_text(encoding="utf-8")

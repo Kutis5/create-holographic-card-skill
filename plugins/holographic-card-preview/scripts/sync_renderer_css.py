@@ -6,7 +6,9 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TEMPLATE = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template"
+REPOSITORY_ROOT = ROOT.parents[1]
+TEMPLATE = REPOSITORY_ROOT / "assets" / "react-template"
+LEGACY_TEMPLATE = REPOSITORY_ROOT / "create-holographic-card" / "assets" / "react-template"
 ASSETS = ROOT / "assets"
 FILES = {
     "HolographicCard.module.css": "card-renderer.css",
@@ -25,15 +27,18 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def main() -> int:
+    template = TEMPLATE if TEMPLATE.is_dir() else LEGACY_TEMPLATE
+    if not template.is_dir():
+        raise SystemExit(f"Canonical renderer assets are missing: {TEMPLATE}")
     for source_name, destination_name in FILES.items():
-        source, destination = TEMPLATE / source_name, ASSETS / destination_name
+        source, destination = template / source_name, ASSETS / destination_name
         if not source.is_file():
             raise SystemExit(f"Canonical renderer asset is missing: {source}")
         destination.write_bytes(source.read_bytes())
         if destination.read_bytes() != source.read_bytes():
             raise SystemExit(f"Renderer asset hash mismatch after sync: {destination}")
         print(f"Synced {source} -> {destination} ({sha256(destination)})")
-    texture_source = TEMPLATE / "holo-textures"
+    texture_source = template / "holo-textures"
     texture_destination = ASSETS / "holo-textures"
     texture_destination.mkdir(parents=True, exist_ok=True)
     for name in TEXTURE_FILES:

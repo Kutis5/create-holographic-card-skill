@@ -5,7 +5,7 @@
   "scripts": {
     "build:renderer": "python scripts/sync_renderer_css.py",
     "test:server": "python scripts/test_server.py",
-    "test:js": "node --check assets/preview.js && node --check assets/holo-engine.js && node --check assets/frame-palette.js && node --check assets/optical-state.js && node --check assets/pointer-motion.js && node ../../create-holographic-card/scripts/test_frame_palette.mjs && node ../../create-holographic-card/scripts/test_optical_state.mjs && node ../../create-holographic-card/scripts/test_pointer_motion.mjs && node ../../create-holographic-card/scripts/test_holo_engine.mjs",
+    "test:js": "node --check assets/preview.js && node --check assets/holo-engine.js && node --check assets/frame-palette.js && node --check assets/optical-state.js && node --check assets/pointer-motion.js && node ../../scripts/test_pointer_motion.mjs && node ../../scripts/test_holo_engine.mjs",
     "test": "npm run build:renderer && npm run test:server && npm run test:js"
   }
 }
