@@ -1,6 +1,7 @@
 import { extractFramePalette, paletteFromColor } from "/assets/frame-palette.js";
 import { MATERIAL_PROFILES, createHolographicRenderer } from "/assets/holo-engine.js";
 import { computeOpticalState, expandFoilColors } from "/assets/optical-state.js";
+import { createPointerMotionController } from "/assets/pointer-motion.js";
 
 const previewMatch = /^\/preview\/([A-Za-z0-9_-]{32,96})$/.exec(location.pathname);
 const id = previewMatch?.[1];
@@ -18,7 +19,9 @@ const errorPanel = document.getElementById("render-error");
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 let config;
 let renderer;
+let motion;
 let resizeObserver;
+let resizeFrame = 0;
 let diagnosticsTimer;
 let flipped = false;
 let point = { x: 50, y: 50 };
@@ -37,16 +40,20 @@ const applyFramePalette = (element, image, frame) => {
 };
 
 function showError(error) {
+  motion?.dispose();
+  motion = undefined;
   renderer?.dispose();
   renderer = undefined;
   resizeObserver?.disconnect();
+  if (resizeFrame) cancelAnimationFrame(resizeFrame);
+  resizeFrame = 0;
   card.hidden = true;
   toolbar.hidden = true;
   errorPanel.hidden = false;
   errorPanel.textContent = `Holographic preview unavailable: ${error instanceof Error ? error.message : String(error)}`;
 }
 
-function write(x, y, driveRenderer = true) {
+function write(x, y, driveRenderer = false, now) {
   if (!config || !renderer) return;
   const presentation = config.presentation;
   const recipe = MATERIAL_PROFILES[presentation.surface.material];
@@ -61,9 +68,9 @@ function write(x, y, driveRenderer = true) {
   set("--subject-y", pct(ny * presentation.depth.parallaxY));
   set("--subject-z", `${distance * presentation.depth.lift}px`);
   if (driveRenderer) {
-    set("--tilt-duration", `${Math.round(presentation.motion.smoothing * 1000)}ms`);
-    set("--tilt-ease", "cubic-bezier(.2,.75,.22,1)");
-    renderer.setPointer(nx, ny, true);
+    set("--tilt-duration", "0ms");
+    set("--tilt-ease", "linear");
+    renderer.renderPointerFrame(nx, ny, now);
   }
   clearTimeout(diagnosticsTimer);
   diagnosticsTimer = setTimeout(() => {
@@ -97,6 +104,7 @@ function apply(presentation) {
 }
 
 function reset() {
+  motion?.release();
   point = { x: 50, y: 50 };
   set("--tilt-duration", "1200ms");
   set("--tilt-ease", "cubic-bezier(.18,1.38,.32,1)");
@@ -139,7 +147,21 @@ fetch(`/api/preview/${id}`, { cache: "no-store" })
     applyFramePalette(front, background, payload.presentation.frame);
     await backPaletteReady;
     renderer = createHolographicRenderer({ canvas, image: background, presentation: payload.presentation, onError: showError });
-    resizeObserver = new ResizeObserver(() => renderer?.resize());
+    motion = createPointerMotionController({
+      smoothing: payload.presentation.motion.smoothing,
+      getBounds: () => card.getBoundingClientRect(),
+      onFrame: (nextPoint, now) => {
+        point = nextPoint;
+        write(nextPoint.x, nextPoint.y, true, now);
+      },
+    });
+    const scheduleResize = () => {
+      if (!resizeFrame) resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = 0;
+        renderer?.resize();
+      });
+    };
+    resizeObserver = new ResizeObserver(scheduleResize);
     resizeObserver.observe(canvas);
     await renderer.ready();
     syncReducedMotion();
@@ -153,9 +175,9 @@ fetch(`/api/preview/${id}`, { cache: "no-store" })
 }
 
 card.addEventListener("pointermove", event => {
-  const rect = card.getBoundingClientRect();
-  point = { x: clamp((event.clientX - rect.left) / rect.width * 100, 0, 100), y: clamp((event.clientY - rect.top) / rect.height * 100, 0, 100) };
-  write(point.x, point.y);
+  const samples = event.getCoalescedEvents?.();
+  const sample = samples?.[samples.length - 1] ?? event;
+  motion?.moveClient(sample.clientX, sample.clientY);
 });
 card.addEventListener("pointerleave", reset);
 card.addEventListener("pointercancel", reset);
@@ -168,7 +190,7 @@ card.addEventListener("keydown", event => {
   else if (event.key === "ArrowUp") delta.y = -8; else if (event.key === "ArrowDown") delta.y = 8; else return;
   event.preventDefault();
   point = { x: clamp(point.x + delta.x, 0, 100), y: clamp(point.y + delta.y, 0, 100) };
-  write(point.x, point.y);
+  motion?.setPoint(point.x, point.y);
 });
 document.getElementById("reset").addEventListener("click", reset);
 flipButton.addEventListener("click", flip);
@@ -177,5 +199,7 @@ document.addEventListener("visibilitychange", () => renderer?.setPaused(document
 window.addEventListener("pagehide", () => {
   globalThis.__holoPreviewDiagnostics = undefined;
   clearTimeout(diagnosticsTimer);
+  motion?.dispose();
+  if (resizeFrame) cancelAnimationFrame(resizeFrame);
   renderer?.dispose();
 }, { once: true });

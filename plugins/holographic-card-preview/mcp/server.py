@@ -15,7 +15,7 @@ try:
 except ImportError:  # pragma: no cover
     Image = ImageOps = None  # type: ignore[assignment]
 
-SERVER_NAME, SERVER_VERSION = "holographic-card-preview", "0.10.0"
+SERVER_NAME, SERVER_VERSION = "holographic-card-preview", "0.9.0"
 ROOT, ASSETS = Path(__file__).resolve().parents[1], Path(__file__).resolve().parents[1] / "assets"
 PRESENTATION_SCHEMA_PATH = ROOT / "schemas" / "card-presentation-v2.schema.json"
 MAX_SOURCE_BYTES, MAX_PIXELS, MAX_ASSET_BYTES = 25 * 1024 * 1024, 40_000_000, 2 * 1024 * 1024
@@ -40,7 +40,7 @@ def read_asset(name: str) -> bytes:
     try: return path.read_bytes()
     except OSError as error: raise RuntimeError(f"Preview asset is missing at MCP startup: {path}") from error
 
-HTML_BYTES, CSS_BYTES, JS_BYTES, ENGINE_BYTES, RENDERER_CSS_BYTES, FRAME_PALETTE_BYTES, OPTICAL_STATE_BYTES = (read_asset(name) for name in ("preview.html", "preview.css", "preview.js", "holo-engine.js", "card-renderer.css", "frame-palette.js", "optical-state.js"))
+HTML_BYTES, CSS_BYTES, JS_BYTES, ENGINE_BYTES, RENDERER_CSS_BYTES, FRAME_PALETTE_BYTES, OPTICAL_STATE_BYTES, POINTER_MOTION_BYTES = (read_asset(name) for name in ("preview.html", "preview.css", "preview.js", "holo-engine.js", "card-renderer.css", "frame-palette.js", "optical-state.js", "pointer-motion.js"))
 HOLO_TEXTURE_NAMES = (
     "clear-coat.webp", "pearl.webp", "brushed-metal.webp", "spectral-lines.webp",
     "etched-holo.webp", "cosmic-flake.webp", "star-holo.webp", "blue-noise.webp", "micro-grain.webp",
@@ -226,7 +226,7 @@ def make_handler() -> type[BaseHTTPRequestHandler]:
         def dispatch(self) -> None:
             if not self.allowed_host(): self.send_error(HTTPStatus.BAD_REQUEST); return
             path = urlparse(self.path).path
-            static = {"/assets/preview.css": (CSS_BYTES, "text/css; charset=utf-8"), "/assets/preview.js": (JS_BYTES, "text/javascript; charset=utf-8"), "/assets/holo-engine.js": (ENGINE_BYTES, "text/javascript; charset=utf-8"), "/assets/frame-palette.js": (FRAME_PALETTE_BYTES, "text/javascript; charset=utf-8"), "/assets/optical-state.js": (OPTICAL_STATE_BYTES, "text/javascript; charset=utf-8"), "/assets/card-renderer.css": (RENDERER_CSS_BYTES, "text/css; charset=utf-8")}
+            static = {"/assets/preview.css": (CSS_BYTES, "text/css; charset=utf-8"), "/assets/preview.js": (JS_BYTES, "text/javascript; charset=utf-8"), "/assets/holo-engine.js": (ENGINE_BYTES, "text/javascript; charset=utf-8"), "/assets/frame-palette.js": (FRAME_PALETTE_BYTES, "text/javascript; charset=utf-8"), "/assets/optical-state.js": (OPTICAL_STATE_BYTES, "text/javascript; charset=utf-8"), "/assets/pointer-motion.js": (POINTER_MOTION_BYTES, "text/javascript; charset=utf-8"), "/assets/card-renderer.css": (RENDERER_CSS_BYTES, "text/css; charset=utf-8")}
             if path in static: data, mime = static[path]; self.send_payload(HTTPStatus.OK, data, mime); return
             texture_match = re.fullmatch(r"/assets/holo-textures/([a-z-]+\.webp)", path)
             if texture_match and texture_match.group(1) in HOLO_TEXTURE_BYTES:

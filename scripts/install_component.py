@@ -23,6 +23,8 @@ TEMPLATE_FILES = (
     "frame-palette.d.ts",
     "optical-state.js",
     "optical-state.d.ts",
+    "pointer-motion.js",
+    "pointer-motion.d.ts",
     "materials.ts",
     "index.ts",
 )

@@ -6,13 +6,14 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TEMPLATE = ROOT / "skills" / "create-holographic-card" / "assets" / "react-template"
+TEMPLATE = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template"
 ASSETS = ROOT / "assets"
 FILES = {
     "HolographicCard.module.css": "card-renderer.css",
     "holo-engine.js": "holo-engine.js",
     "frame-palette.js": "frame-palette.js",
     "optical-state.js": "optical-state.js",
+    "pointer-motion.js": "pointer-motion.js",
 }
 TEXTURE_FILES = (
     "clear-coat.webp", "pearl.webp", "brushed-metal.webp", "spectral-lines.webp",

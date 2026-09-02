@@ -623,11 +623,12 @@ export function createHolographicRenderer({ canvas, image, presentation, mobile 
     const dpr = requestedDpr * pixelScale;
     const width = Math.max(1, Math.round(cssWidth * dpr));
     const height = Math.max(1, Math.round(cssHeight * dpr));
+    const changed = width !== lastSize.width || height !== lastSize.height || dpr !== lastSize.dpr;
     if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
-    gl.viewport(0, 0, width, height);
+    if (changed) gl.viewport(0, 0, width, height);
     lastSize = { cssWidth, cssHeight, width, height, dpr };
     resizeDirty = false;
-    return { width, height, dpr };
+    return { width, height, dpr, changed };
   }
 
   function uniform(name) {
@@ -717,7 +718,7 @@ export function createHolographicRenderer({ canvas, image, presentation, mobile 
   }
 
   function ensureAnimation() {
-    if (!frame && !failed && !disposed && !paused && !reducedMotion && texturesReady) {
+    if (!frame && !failed && !disposed && !paused && !reducedMotion && texturesReady && mode !== "external") {
       previousFrameTime = 0;
       frame = requestFrame(animate);
     }
@@ -725,9 +726,9 @@ export function createHolographicRenderer({ canvas, image, presentation, mobile 
 
   function animate(now) {
     frame = 0;
-    if (failed || disposed || paused || reducedMotion || !texturesReady) return;
+    if (failed || disposed || paused || reducedMotion || !texturesReady || mode === "external") return;
     const targetInterval = mode === "idle" ? IDLE_FRAME_INTERVAL_MS : ACTIVE_FRAME_INTERVAL_MS;
-    if (lastRenderAt && now - lastRenderAt < targetInterval) {
+    if (lastRenderAt && now - lastRenderAt < targetInterval - 0.25) {
       frame = requestFrame(animate);
       return;
     }
@@ -780,6 +781,23 @@ export function createHolographicRenderer({ canvas, image, presentation, mobile 
       if (renderImmediately) render(currentPoint);
     }
     ensureAnimation();
+  }
+
+  function renderPointerFrame(x, y, now = performance.now()) {
+    if (disposed || failed) return;
+    if (reducedMotion) {
+      currentPoint = targetPoint = { x: 0.48, y: -0.36 };
+      render(currentPoint, now);
+      return;
+    }
+    if (frame) cancelFrame(frame);
+    frame = 0;
+    currentPoint = targetPoint = {
+      x: Math.max(-1, Math.min(1, Number(x) || 0)),
+      y: Math.max(-1, Math.min(1, Number(y) || 0)),
+    };
+    mode = "external";
+    render(currentPoint, now);
   }
 
   function releasePointer() {
@@ -919,7 +937,8 @@ export function createHolographicRenderer({ canvas, image, presentation, mobile 
     setPresentation,
     setReducedMotion,
     setPaused,
-    resize: () => { resize(); render(); },
+    renderPointerFrame,
+    resize: () => { if (resize().changed) render(); },
     render: () => render(),
     diagnostics,
     dispose,

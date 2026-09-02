@@ -8,6 +8,8 @@ import { createHolographicRenderer } from "./holo-engine.js";
 import type { HolographicRenderer } from "./holo-engine.js";
 import { computeOpticalState, expandFoilColors } from "./optical-state.js";
 import { opticalRecipe } from "./optical-recipes";
+import { createPointerMotionController } from "./pointer-motion.js";
+import type { PointerMotionController } from "./pointer-motion.js";
 import styles from "./HolographicCard.module.css";
 
 export interface HolographicCardProps {
@@ -32,6 +34,7 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
   const backgroundRef = useRef<HTMLImageElement>(null);
   const backRef = useRef<HTMLImageElement>(null);
   const rendererRef = useRef<HolographicRenderer | null>(null);
+  const motionRef = useRef<PointerMotionController | null>(null);
   const point = useRef({ x: 50, y: 50 });
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [backLoaded, setBackLoaded] = useState(false);
@@ -48,25 +51,30 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
   const rendererFamilyRef = useRef(presentation.surface.material);
   const hasBack = Boolean(backSrc);
   const recipe = opticalRecipe(presentation.surface.material);
+  const presentationRef = useRef(presentation);
+  const recipeRef = useRef(recipe);
+  presentationRef.current = presentation;
+  recipeRef.current = recipe;
 
-  const write = (x: number, y: number, driveRenderer = true) => {
+  const write = (x: number, y: number, driveRenderer = false, now?: number) => {
     const element = cardRef.current;
     if (!element) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const activePresentation = presentationRef.current;
     const nx = reduced ? 0.48 : (x - 50) / 50;
     const ny = reduced ? -0.36 : (y - 50) / 50;
-    const state = computeOpticalState(presentation, nx, ny, recipe);
+    const state = computeOpticalState(activePresentation, nx, ny, recipeRef.current);
     const distance = Math.min(1, Math.hypot(nx, ny));
     element.style.setProperty("--rotate-x", reduced ? "0deg" : `${state.rotateX}deg`);
     element.style.setProperty("--rotate-y", reduced ? "0deg" : `${state.rotateY}deg`);
     element.style.setProperty("--card-scale", reduced ? "1" : String(state.scale));
-    element.style.setProperty("--subject-x", pct(nx * presentation.depth.parallaxX));
-    element.style.setProperty("--subject-y", pct(ny * presentation.depth.parallaxY));
-    element.style.setProperty("--subject-z", `${reduced ? 0 : distance * presentation.depth.lift}px`);
+    element.style.setProperty("--subject-x", pct(nx * activePresentation.depth.parallaxX));
+    element.style.setProperty("--subject-y", pct(ny * activePresentation.depth.parallaxY));
+    element.style.setProperty("--subject-z", `${reduced ? 0 : distance * activePresentation.depth.lift}px`);
     if (driveRenderer) {
-      element.style.setProperty("--tilt-duration", `${Math.round(presentation.motion.smoothing * 1000)}ms`);
-      element.style.setProperty("--tilt-ease", "cubic-bezier(.2,.75,.22,1)");
-      rendererRef.current?.setPointer(nx, ny, true);
+      element.style.setProperty("--tilt-duration", "0ms");
+      element.style.setProperty("--tilt-ease", "linear");
+      rendererRef.current?.renderPointerFrame(nx, ny, now);
     }
   };
 
@@ -125,7 +133,23 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
     };
     reduce();
     media.addEventListener("change", reduce);
-    const observer = new ResizeObserver(() => renderer.resize());
+    const motion = createPointerMotionController({
+      smoothing: presentationRef.current.motion.smoothing,
+      getBounds: () => cardRef.current?.getBoundingClientRect() ?? null,
+      onFrame: (nextPoint, now) => {
+        point.current = nextPoint;
+        write(nextPoint.x, nextPoint.y, true, now);
+      },
+    });
+    motionRef.current = motion;
+    let resizeFrame = 0;
+    const scheduleResize = () => {
+      if (!resizeFrame) resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = 0;
+        renderer.resize();
+      });
+    };
+    const observer = new ResizeObserver(scheduleResize);
     observer.observe(canvasRef.current);
     const visibility = () => renderer.setPaused(document.hidden);
     document.addEventListener("visibilitychange", visibility);
@@ -138,6 +162,9 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
     return () => {
       cancelled = true;
       observer.disconnect();
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+      motion.dispose();
+      if (motionRef.current === motion) motionRef.current = null;
       document.removeEventListener("visibilitychange", visibility);
       media.removeEventListener("change", reduce);
       renderer.dispose();
@@ -153,6 +180,7 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
       const familyChanged = rendererFamilyRef.current !== presentation.surface.material;
       if (familyChanged) setRendererReady(false);
       renderer.setPresentation(presentation);
+      motionRef.current?.setSmoothing(presentation.motion.smoothing);
       rendererFamilyRef.current = presentation.surface.material;
       if (familyChanged) {
         renderer.ready().then(() => { if (!cancelled) setRendererReady(true); }).catch(error => {
@@ -166,6 +194,7 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
   }, [presentation]);
 
   const reset = () => {
+    motionRef.current?.release();
     point.current = { x: 50, y: 50 };
     cardRef.current?.style.setProperty("--tilt-duration", "1200ms");
     cardRef.current?.style.setProperty("--tilt-ease", "cubic-bezier(.18,1.38,.32,1)");
@@ -174,12 +203,9 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
   };
   const move = (event: PointerEvent<HTMLElement>) => {
     if (!interactive) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    point.current = {
-      x: clamp((event.clientX - bounds.left) / bounds.width * 100, 0, 100),
-      y: clamp((event.clientY - bounds.top) / bounds.height * 100, 0, 100),
-    };
-    write(point.current.x, point.current.y);
+    const samples = event.nativeEvent.getCoalescedEvents?.();
+    const sample = samples?.[samples.length - 1] ?? event.nativeEvent;
+    motionRef.current?.moveClient(sample.clientX, sample.clientY);
   };
   const key = (event: KeyboardEvent<HTMLElement>) => {
     if (event.target !== event.currentTarget) return;
@@ -191,7 +217,7 @@ export function HolographicCard({ card, interactive = true, className }: Hologra
     else if (event.key === "ArrowUp") delta.y = -8; else if (event.key === "ArrowDown") delta.y = 8; else return;
     event.preventDefault();
     point.current = { x: clamp(point.current.x + delta.x, 0, 100), y: clamp(point.current.y + delta.y, 0, 100) };
-    write(point.current.x, point.current.y);
+    motionRef.current?.setPoint(point.current.x, point.current.y);
   };
 
   const p = presentation;

@@ -35,13 +35,15 @@ export interface HolographicRendererDiagnostics {
   failed: boolean;
   ready: boolean;
   animationPending: boolean;
-  mode: "idle" | "interactive" | "release" | "reduced-motion" | "paused";
+  mode: "idle" | "interactive" | "locked" | "external" | "release" | "reduced-motion" | "paused";
 }
 
 export interface HolographicRenderer {
   /** Resolves after the atlas and shared textures are decoded, uploaded, and the first frame is rendered. */
   ready(): Promise<void>;
   setPointer(x: number, y: number, immediate?: boolean): void;
+  /** Render exactly one externally scheduled interaction frame. */
+  renderPointerFrame(x: number, y: number, now?: number): void;
   releasePointer(): void;
   setPresentation(presentation: CardPresentation): void;
   setReducedMotion(value: boolean): void;

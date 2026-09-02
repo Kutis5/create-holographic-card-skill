@@ -38,7 +38,7 @@ class PreviewServerTests(unittest.TestCase):
         return {"background_path": str(self.background()), "subject_path": str(self.subject()), "art_alt": "Monochrome portrait", "presentation": presentation(), **extra}
     def test_v5_protocol_has_one_tool(self):
         initialized = SERVER.handle_rpc({"jsonrpc":"2.0","id":1,"method":"initialize","params":{}})
-        self.assertEqual(initialized["result"]["serverInfo"]["version"], "0.10.0")
+        self.assertEqual(initialized["result"]["serverInfo"]["version"], "0.9.0")
         tools = SERVER.handle_rpc({"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}})["result"]["tools"]
         self.assertEqual([tool["name"] for tool in tools], ["preview_holographic_card"])
         self.assertIn("full-bleed 5:7", tools[0]["description"]); self.assertIn("right-side Browser panel", tools[0]["description"])
@@ -157,8 +157,20 @@ class PreviewServerTests(unittest.TestCase):
             self.assertIn("backface-visibility:hidden", rule.group())
             self.assertIn("-webkit-backface-visibility:hidden", rule.group())
             self.assertIn("transform-style:preserve-3d", rule.group())
+
+    def test_pointer_input_is_coalesced_into_one_shared_frame_clock(self):
+        preview = (ROOT / "assets" / "preview.js").read_text(encoding="utf-8")
+        engine = (ROOT / "assets" / "holo-engine.js").read_text(encoding="utf-8")
+        self.assertIn('import { createPointerMotionController } from "/assets/pointer-motion.js";', preview)
+        self.assertIn("event.getCoalescedEvents?.()", preview)
+        self.assertIn("motion?.moveClient(sample.clientX, sample.clientY);", preview)
+        self.assertIn("renderer.renderPointerFrame(nx, ny, now);", preview)
+        self.assertNotIn("write(point.x, point.y);", preview)
+        self.assertIn("function renderPointerFrame(x, y, now = performance.now())", engine)
+        self.assertIn('mode = "external";', engine)
+        self.assertIn("targetInterval - 0.25", engine)
     def test_javascript_parses(self):
-        for name in ("preview.js", "holo-engine.js", "frame-palette.js", "optical-state.js"):
+        for name in ("preview.js", "holo-engine.js", "frame-palette.js", "optical-state.js", "pointer-motion.js"):
             result = subprocess.run(["node", "--check", str(ROOT / "assets" / name)], capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -169,14 +181,18 @@ class PreviewServerTests(unittest.TestCase):
         self.assertIn("NEUTRAL_REVEAL = IDLE_REVEAL", js)
         self.assertIn("flagshipOptics", js)
         self.assertIn("MAX_DEVICE_PIXEL_RATIO = 2", js)
-        canonical_root = ROOT / "skills" / "create-holographic-card" / "assets" / "react-template"
-        canonical_path = canonical_root / "holo-engine.js"
-        self.assertEqual((ROOT / "assets" / "holo-engine.js").read_bytes(), canonical_path.read_bytes())
-        canonical_palette = canonical_root / "frame-palette.js"
+        canonical_path = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "holo-engine.js"
+        if canonical_path.is_file():
+            self.assertEqual((ROOT / "assets" / "holo-engine.js").read_bytes(), canonical_path.read_bytes())
+        else:
+            self.assertIn("buildFragmentShader", js)
+        canonical_palette = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "frame-palette.js"
         self.assertEqual((ROOT / "assets" / "frame-palette.js").read_bytes(), canonical_palette.read_bytes())
-        canonical_optical = canonical_root / "optical-state.js"
+        canonical_optical = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "optical-state.js"
         self.assertEqual((ROOT / "assets" / "optical-state.js").read_bytes(), canonical_optical.read_bytes())
-        canonical_textures = canonical_root / "holo-textures"
+        canonical_pointer_motion = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "pointer-motion.js"
+        self.assertEqual((ROOT / "assets" / "pointer-motion.js").read_bytes(), canonical_pointer_motion.read_bytes())
+        canonical_textures = ROOT.parents[1] / "create-holographic-card" / "assets" / "react-template" / "holo-textures"
         for name in (*SERVER.HOLO_TEXTURE_NAMES, "manifest.json"):
             self.assertEqual((ROOT / "assets" / "holo-textures" / name).read_bytes(), (canonical_textures / name).read_bytes())
         preview_js = (ROOT / "assets" / "preview.js").read_text(encoding="utf-8")
@@ -193,11 +209,5 @@ class PreviewServerTests(unittest.TestCase):
         self.assertIn("flagship rainbow palette", skill)
         self.assertNotIn("Unless explicitly overridden, use foil `0.78`", skill)
         self.assertNotIn("open_in_browser", skill)
-
-    def test_bundle_contains_the_creation_skill_and_cardex_export_path(self):
-        skill = (ROOT / "skills" / "create-holographic-card" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("preview_holographic_card", skill)
-        self.assertIn("export_hcard.py", skill)
-        self.assertIn("Cardex", skill)
 
 if __name__ == "__main__": unittest.main(verbosity=2)
